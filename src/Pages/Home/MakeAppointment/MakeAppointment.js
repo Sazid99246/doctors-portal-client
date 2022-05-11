@@ -6,7 +6,7 @@ import GetStartedButton from '../../Shared/GetStartedButton/GetStartedButton';
 const MakeAppointment = () => {
     return (
         <div className='flex justify-center items-center mt-[200px] mx-12' style={{background: `url(${appointment})`}}>
-            <div className='flex-1'>
+            <div className='flex-1 hidden lg:block'>
                 <img className='mt-[-120px]' src={doctor} alt="" />
             </div>
             <div className='flex-1 text-white mr-[134px]'>
