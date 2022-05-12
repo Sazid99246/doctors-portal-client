@@ -6,7 +6,6 @@ const BookingModal = ({ treatment, date }) => {
     const handleBooking = event =>{
         event.preventDefault();
         const slot = event.target.slot.value;
-        console.log(_id, name, slot);
     }
     return (
         <div>
