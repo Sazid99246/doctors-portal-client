@@ -7,7 +7,7 @@ const AvailableAppointments = ({ date }) => {
     const [services, setServices] = useState([]);
     const [treatment, setTreatment] = useState(null);
     useEffect(() => {
-        fetch('https://still-beyond-05595.herokuapp.com/service')
+        fetch('https://boiling-earth-01998.herokuapp.com/service')
             .then(res => res.json())
             .then(data => setServices(data))
     }, [])
