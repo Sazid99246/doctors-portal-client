@@ -2,37 +2,38 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import Loading from "../Shared/Loading/Loading";
 
-
 const SignUp = () => {
-  const {register,formState: { errors }, handleSubmit,} = useForm();
-  const [
-    createUserWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useCreateUserWithEmailAndPassword(auth);
-  const navigate = useNavigate()
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  const [createUserWithEmailAndPassword, user, loading, error] = useCreateUserWithEmailAndPassword(auth);
+  const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
+  const navigate = useNavigate();
   let signUpError;
-  if(user){
-    signOut(auth)
-    navigate('/login')
+  if (user || gUser) {
+    signOut(auth);
+    navigate("/login");
   }
 
-  if(loading){
-    return <Loading/>
+  if (loading || gLoading) {
+    return <Loading />;
   }
-  if(error){
-    signUpError = <p>{error.message}</p>
+  if (error) {
+    signUpError = <p className="text-red-500">{error.message}</p>;
   }
-  
+  if(gError) {
+    signUpError = <p className="text-red-500">{gError.message}</p>
+  }
+
   const onSubmit = (data) => {
-    createUserWithEmailAndPassword(data.email, data.password)
+    createUserWithEmailAndPassword(data.email, data.password);
   };
-
 
   return (
     <div className="flex h-screen justify-items-center">
@@ -52,6 +53,8 @@ const SignUp = () => {
                 {errors.name?.type === "required" && "Name is required"}
               </p>
             </label>
+            <br />
+
             <label className="input-group input-group-vertical">
               <span className="bg-white text-md">Email</span>
               <input
@@ -68,6 +71,8 @@ const SignUp = () => {
                 {errors.email?.type === "pattern" && "Enter a valid email"}
               </p>
             </label>
+            <br />
+
             <label className="input-group input-group-vertical">
               <span className="bg-white text-md">Password</span>
               <input
@@ -81,16 +86,19 @@ const SignUp = () => {
               />
               <p className="text-red-500">
                 {errors.password?.type === "required" && "Password is required"}
-                {errors.password?.type === "minLength" && "Password should at least 6 characters or more"}
+                {errors.password?.type === "minLength" &&
+                  "Password should at least 6 characters or more"}
               </p>
               <span className="bg-white text-md">Forgot Password?</span>
             </label>
+            <br />
             {signUpError}
+            <br />
             <div className="flex items-center justify-center">
               <input
                 type="submit"
                 value="sign up"
-                class="btn text-white bg-black btn-wide uppercase"
+                class="w-[327px] btn text-white bg-black uppercase"
               />
             </div>
           </form>
@@ -101,7 +109,10 @@ const SignUp = () => {
             </Link>
           </span>
           <div className="divider">OR</div>
-          <button class="btn uppercase text-black border-black hover:text-white active:text-white">
+          <button 
+            onClick={() => signInWithGoogle()} 
+            class="btn uppercase text-black border-black hover:text-white active:text-white"
+          >
             Continue with google
           </button>
         </div>

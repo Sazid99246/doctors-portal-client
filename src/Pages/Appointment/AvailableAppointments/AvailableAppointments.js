@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
+import Loading from '../../Shared/Loading/Loading';
 import BookingModal from '../BookingModal/BookingModal';
 import Service from '../Service/Service';
 
@@ -11,6 +12,9 @@ const AvailableAppointments = ({ date }) => {
             .then(res => res.json())
             .then(data => setServices(data))
     }, [])
+    if(services.length === 0){
+        return <Loading/>
+    }
     return (
         <div>
             <h4 className='text-center text-primary text-[22px]'>Available Appointments on {format(date, 'PP')}</h4>

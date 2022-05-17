@@ -1,5 +1,5 @@
 import React from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
@@ -11,26 +11,24 @@ const Login = () => {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const [
-    signInWithEmailAndPassword,
-    user,
-    loading,
-    error,
-  ] = useSignInWithEmailAndPassword(auth);
-  
+  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
   const onSubmit = (data) => {
-    signInWithEmailAndPassword(data.email, data.password)
+    signInWithEmailAndPassword(data.email, data.password);
   };
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   let loginError;
-  if(user){
-    navigate('/')
+  if (user || gUser) {
+    navigate("/");
   }
-  if(error){
-    loginError = <p className="text-red-500">{error.message}</p>
+  if (error) {
+    loginError = <p className="text-red-500">{error.message}</p>;
   }
-  if(loading){
-    return <Loading/>
+  if(gError){
+    loginError = <p className="text-red-500">{gError.message}</p>
+  }
+  if (loading || gLoading) {
+    return <Loading />;
   }
   return (
     <div className="flex h-screen justify-items-center">
@@ -38,7 +36,6 @@ const Login = () => {
         <div class="card-body">
           <h2 class="text-center font-xl">Login</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
-
             <label className="input-group input-group-vertical">
               <span className="bg-white text-md">Email</span>
               <input
@@ -95,11 +92,10 @@ const Login = () => {
           </span>
 
           <div className="divider">OR</div>
-          <button class="btn uppercase text-black border-black hover:text-white active:text-white">
+          <button onClick={()=>signInWithGoogle()} class="btn uppercase text-black border-black hover:text-white active:text-white">
             Continue with google
           </button>
         </div>
-
       </div>
     </div>
   );
