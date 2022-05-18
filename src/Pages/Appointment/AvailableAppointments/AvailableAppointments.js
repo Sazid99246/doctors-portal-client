@@ -7,8 +7,9 @@ import Service from '../Service/Service';
 const AvailableAppointments = ({ date }) => {
     const [services, setServices] = useState([]);
     const [treatment, setTreatment] = useState(null);
+    const formattedDate = format(date, 'PP');
     useEffect(() => {
-        fetch('https://boiling-earth-01998.herokuapp.com/service')
+        fetch(`https://boiling-earth-01998.herokuapp.com/available?date=${formattedDate}`)
             .then(res => res.json())
             .then(data => setServices(data))
     }, [])
@@ -27,7 +28,11 @@ const AvailableAppointments = ({ date }) => {
                     ></Service>)
                 }
             </div>
-            {treatment && <BookingModal date={date} treatment={treatment}></BookingModal>}
+            {treatment && <BookingModal 
+            date={date} 
+            treatment={treatment}
+            setTreatment={setTreatment}
+            ></BookingModal>}
         </div >
     );
 };

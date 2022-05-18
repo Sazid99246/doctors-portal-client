@@ -9,7 +9,8 @@ import Reviews from './Pages/Reviews/Reviews';
 import Header from './Pages/Shared/Header/Header';
 import RequireAuth from './Pages/Shared/RequireAuth/RequireAuth';
 import SignUp from './Pages/SignUp/SignUp';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <div>
@@ -27,6 +28,7 @@ function App() {
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<SignUp/>}></Route>
       </Routes>
+      <ToastContainer></ToastContainer>
     </div>
   );
 }
