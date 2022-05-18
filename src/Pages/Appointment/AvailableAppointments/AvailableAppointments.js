@@ -1,25 +1,23 @@
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
-import Loading from '../../Shared/Loading/Loading';
+import React, { useState, useEffect } from 'react';
 import BookingModal from '../BookingModal/BookingModal';
 import Service from '../Service/Service';
 
 const AvailableAppointments = ({ date }) => {
     const [services, setServices] = useState([]);
     const [treatment, setTreatment] = useState(null);
+
     const formattedDate = format(date, 'PP');
     useEffect(() => {
         fetch(`https://boiling-earth-01998.herokuapp.com/available?date=${formattedDate}`)
             .then(res => res.json())
-            .then(data => setServices(data))
-    }, [])
-    if(services.length === 0){
-        return <Loading/>
-    }
+            .then(data => setServices(data));
+    }, [formattedDate])
+
     return (
-        <div>
-            <h4 className='text-center text-primary text-[22px]'>Available Appointments on {format(date, 'PP')}</h4>
-            <div className='mx-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
+        <div className='my-10'>
+            <h4 className='text-xl text-secondary text-center my-12'>Available Appointments on {format(date, 'PP')}</h4>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>
                 {
                     services.map(service => <Service
                         key={service._id}
@@ -28,12 +26,12 @@ const AvailableAppointments = ({ date }) => {
                     ></Service>)
                 }
             </div>
-            {treatment && <BookingModal 
-            date={date} 
-            treatment={treatment}
-            setTreatment={setTreatment}
+            {treatment && <BookingModal
+                date={date}
+                treatment={treatment}
+                setTreatment={setTreatment}
             ></BookingModal>}
-        </div >
+        </div>
     );
 };
 
