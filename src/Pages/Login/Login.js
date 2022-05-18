@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSignInWithEmailAndPassword, useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../firebase.init";
 import Loading from "../Shared/Loading/Loading";
 
@@ -11,37 +11,45 @@ const Login = () => {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
+  
   const onSubmit = (data) => {
     signInWithEmailAndPassword(data.email, data.password);
   };
+  const location = useLocation();
   const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    if (user || gUser) {
+      navigate(from, { replace: true });
+    }
+  }, [user, gUser, from, navigate]);
+
   let loginError;
-  if (user || gUser) {
-    navigate("/");
-  }
   if (error) {
     loginError = <p className="text-red-500">{error.message}</p>;
   }
-  if(gError){
-    loginError = <p className="text-red-500">{gError.message}</p>
+  if (gError) {
+    loginError = <p className="text-red-500">{gError.message}</p>;
   }
   if (loading || gLoading) {
     return <Loading />;
   }
   return (
     <div className="flex h-screen justify-items-center">
-      <div class="card m-auto shadow-xl">
-        <div class="card-body">
-          <h2 class="text-center font-xl">Login</h2>
+      <div className="card m-auto shadow-xl">
+        <div className="card-body">
+          <h2 className="text-center font-xl">Login</h2>
           <form onSubmit={handleSubmit(onSubmit)}>
             <label className="input-group input-group-vertical">
               <span className="bg-white text-md">Email</span>
               <input
                 type="email"
                 name="email"
-                class="h-[44px] w-[327px] input input-bordered border-[rgba(207,207,207,1)]"
+                className="h-[44px] w-[327px] input input-bordered border-[rgba(207,207,207,1)]"
                 {...register("email", { required: true })}
                 {...register("email", {
                   pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
@@ -59,7 +67,7 @@ const Login = () => {
               <input
                 type="password"
                 name="password"
-                class="h-[44px] w-[327px] input input-bordered border-[rgba(207,207,207,1)]"
+                className="h-[44px] w-[327px] input input-bordered border-[rgba(207,207,207,1)]"
                 {...register("password", { required: true })}
                 {...register("password", {
                   minLength: 6,
@@ -70,7 +78,6 @@ const Login = () => {
                 {errors.password?.type === "minLength" &&
                   "Password should at least 6 characters or more"}
               </p>
-              <span className="bg-white text-md">Forgot Password?</span>
             </label>
             <br />
             {loginError}
@@ -79,7 +86,7 @@ const Login = () => {
               <input
                 type="submit"
                 value="login"
-                class="btn w-[327px] text-white bg-black uppercase"
+                className="btn w-[327px] text-white bg-black uppercase"
               />
             </div>
           </form>
@@ -92,7 +99,10 @@ const Login = () => {
           </span>
 
           <div className="divider">OR</div>
-          <button onClick={()=>signInWithGoogle()} class="btn uppercase text-black border-black hover:text-white active:text-white">
+          <button
+            onClick={() => signInWithGoogle()}
+            className="btn uppercase text-black border-black hover:text-white active:text-white"
+          >
             Continue with google
           </button>
         </div>
